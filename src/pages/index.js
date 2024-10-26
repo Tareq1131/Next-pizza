@@ -1,3 +1,4 @@
+import CarouselComponent from "@/components/home/Carousel";
 import localFont from "next/font/local";
 
 const geistSans = localFont({
@@ -12,5 +13,5 @@ const geistMono = localFont({
 });
 
 export default function Home() {
-  return <div>Hello world</div>;
+  return <div><CarouselComponent/></div>;
 }
