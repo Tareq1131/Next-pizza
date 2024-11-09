@@ -1,17 +1,19 @@
 import Card from "@/components/home/Card";
 import CarouselComponent from "@/components/home/Carousel";
-import cardData from "../store/cardData.json";
+// import cardData from "../store/cardData.json";
 import { useEffect, useState } from "react";
 import Head from "next/head";
+import { baseUrl } from "@/utils/baseUrl";
 
-export default function Home() {
+export default function Home({data}) {
+  
   let categories = new Set();
   let categoryArray;
   const [typeFilter, setTypeFilter] = useState(false);
   const foodData = [];
 
   const handleData = () => {
-    cardData.map((data) => {
+    data?.map((data) => {
       return foodData.push(data), categories.add(data.category);
     });
   };
@@ -19,8 +21,13 @@ export default function Home() {
   handleData();
   categoryArray = [...categories];
 
+ 
+
   return (
     <>
+     <Head>
+        <title>PizzaWizza</title>
+      </Head>
       <CarouselComponent />
       <div className="container mx-auto">
         <div className="my-6 space-x-5">
@@ -100,4 +107,24 @@ export default function Home() {
       {/* <Card /> */}
     </>
   );
+}
+
+export async function getStaticProps() {
+  let data;
+  try {
+    const pizzaData = await fetch(baseUrl + "api/foodData", { method: "GET" })
+      .then((response) => response.json())
+      .catch((error) => error.message);
+
+    data = await JSON.parse(JSON.stringify(pizzaData)); // step required during deployment in staticProps
+  } catch (error) {
+    console.log(error.message);
+  }
+
+  return {
+    props: {
+      data: data.data || null,
+    },
+    // revalidate: 5,
+  };
 }
